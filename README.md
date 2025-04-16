@@ -3,135 +3,118 @@
 
 # **Mindust**
 
-**Mindust** is a lightweight PHP + MySQL-based blogging system. It delivers core blogging functionality in a simple, elegant interface — without the bloat of major platforms. Ideal for small personal blogs, writers, and devs who want control over their blog infrastructure.
+**Mindust** is a lightweight, PHP + MySQL-based blogging system that offers essential blogging features in a clean, minimalist interface. Perfect for personal blogs, writers, and developers who prefer simplicity and control without the overhead of large platforms.
 
 ---
 
-## **Features**
+## **Key Features**
 
-- **Post Management**: Create, edit, and delete blog posts.
-- **Media Support (Thumbnail only)**:  
-  Each post supports **one thumbnail image**. Uploaded files are saved in the `uploads/` folder and linked to the post using the path:
-  ```
-  /uploads/your-image-name.jpg
-  ```
-- **Inbuilt Comment System**:  
-  Users can comment on posts directly, enabling interaction and discussion.
-
+- **Post Management**: Easily create, edit, and delete blog posts.
+- **Thumbnail Support**:  
+  Each post supports a single thumbnail image, stored in the `uploads/` directory.
+- **Built-in Comment System**:  
+  Enables direct user interaction via comments.
 - **Floating Music Button**:  
-  A simple floating music button is included to play a **single music file** from the `/music` folder.
-
-  > To change the track:  
-  Rename your preferred file as required and update the filename reference manually **on each page** where the player is included.  
-  The default music file is already included and is copyright-free.
-
-- **Responsive Design**: Mobile-friendly layout with clean aesthetics.
-- **Archive Page**: View posts organized by archive dates.
-- **Contact Page**: Visitors can send you messages through a built-in contact form.
-- **Customizable Copyright**
+  Plays one audio file from the `/music` folder. The default track is copyright-free.
+- **Responsive Design**:  
+  Mobile-friendly layout with clean aesthetics.
+- **Archive Page**:  
+  View posts organized by date.
+- **Contact Page**:  
+  Includes a functional contact form for visitor messages.
+- **Editable Footer**:  
+  Fully customizable copyright.
 
 ---
 
-## **Technologies Used**
+## **Technology Stack**
 
-- PHP (Server-side logic)
+- PHP (Backend)
 - MySQL (Database)
-- HTML, CSS & JavaScript (Frontend)
+- HTML, CSS, JavaScript (Frontend)
 - Minimal third-party dependencies
 
 ---
 
-## **Installation**
+## **Installation Guide**
 
-1. **Clone this repository:**
+1. **Clone the repository**
 
-```bash
-git clone https://github.com/druvx13/mindust.git
-cd mindust
-```
+   ```bash
+   git clone https://github.com/druvx13/mindust.git
+   cd mindust
+   ```
 
-2. **Set up the database:**
+2. **Set up the database**
 
-- Create a MySQL database named `mindust`.
-- Import the provided SQL schema from the `db/` folder (e.g., via phpMyAdmin or MySQL CLI).
+   - Create a MySQL database named `mindust`.
+   - Import the SQL file from the `db/` directory using phpMyAdmin or the MySQL CLI.
 
-3. **Configure the application:**
+3. **Configure the application**
 
-Edit `config.php` with your database credentials:
+   Update `config.php` with your database credentials:
 
-```php
-$host = 'localhost';
-$dbname = 'mindust';
-$username = 'your_username';
-$password = 'your_password';
-```
+   ```php
+   $host = 'localhost';
+   $dbname = 'mindust';
+   $username = 'your_username';
+   $password = 'your_password';
+   ```
 
-4. **Run the project locally:**
+4. **Run the project locally**
 
-- Place the project in your local server directory (`htdocs` or `www`).
-- Open `http://localhost/mindust/index.php` in your browser.
+   - Move the project to your server directory (`htdocs` or `www`).
+   - Visit `http://localhost/mindust/index.php` in your browser.
 
 ---
 
-## **Project Structure**
+## **Directory Structure**
 
 ```
 mindust/
-├── db/                   # SQL schema and migration files
-├── uploads/              # Stores uploaded post thumbnails
-├── music/                # Music files (used by floating player)
-├── index.php             # Homepage
-├── post.php              # Displays a full post
-├── create_post.php       # Admin post creation page
-├── archive.php           # Archive list
-├── contact.php           # Contact form
-├── copyright.php         # License footer (editable)
-├── config.php            # Database configuration
-└── README.md             # This documentation
+├── db/               # Database schema
+├── uploads/          # Post thumbnails
+├── music/            # Audio file for the music button
+├── index.php         # Homepage
+├── post.php          # Full post view
+├── create_post.php   # Admin post creation
+├── archive.php       # Archive page
+├── contact.php       # Contact form
+├── config.php        # DB configuration
+├── copyright.php     # Footer content
+└── README.md         # Documentation
 ```
 
 ---
 
-## **How Media Works**
+## **Media & Music Usage**
 
-- Only **one thumbnail** image per post is supported.
-- The uploaded image gets stored in `/uploads/` and linked as:
-  ```
-  /uploads/image-name.jpg
-  ```
-- Ensure filenames are unique to avoid overwriting.
+- **Thumbnails**:  
+  - One image per post, stored in `/uploads/`.
+  - Use unique filenames to prevent overwriting.
 
----
-
-## **Music Button Usage**
-
-- Located at the bottom corner, this button plays music from `/music`.
-- To change the audio:
-  - Replace the existing file or rename your file to match.
-  - Manually update the filename on each page where it's included.
-
-> **Note**: A copyright-free music file is already provided.
+- **Music Button**:  
+  - Audio file must reside in `/music/`.
+  - To change the track, replace or rename the file and update references on pages where it’s used.
 
 ---
 
-## **Customizations**
+## **Customization Tips**
 
-- **Comments**: Already enabled — no plugin needed.
-- **Copyright**
-  - Located in `copyright.php`.
-  - You can freely update the footer information there.
+- **Comments**: Pre-integrated, no plugin required.
+- **Footer**: Update `copyright.php`.
 
 ---
 
 ## **License**
 
-This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.  
-See the [LICENSE](./LICENSE) file for full terms.
+Licensed under the **GNU General Public License v3.0 (GPL-3.0)**.  
+See [LICENSE](./LICENSE) for full terms.
 
 ---
 
-## **Contributions**
+## **Contributing**
 
-Feel free to fork, modify, and submit pull requests. Suggestions and improvements are welcome!
+Contributions are welcome! Fork the repository, make improvements, and submit a pull request.
 
 ---
