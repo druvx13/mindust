@@ -1,9 +1,9 @@
 <?php
 // Database credentials
-$host = 'sql111.byetcluster.com'; // Usually 'localhost'
-$dbname = 'ssmm_32394582_blog'; // Database name
-$username = 'ssmm_32394582'; // Database username (e.g., 'root')
-$password = '13qrny65'; // Database password (empty by default for local setups)
+$host = 'localhost'; // Usually 'localhost'
+$dbname = 'db_name'; // Database name
+$username = 'user_name'; // Database username (e.g., 'root')
+$password = 'user_pass'; // Database password (empty by default for local setups)
 
 try {
     // Create PDO instance
