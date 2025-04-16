@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     
     // Password validation
-    if ($password !== 'skpro394') {
+    if ($password !== 'your-password') {
         $errors[] = 'Incorrect password.';
     }
     
