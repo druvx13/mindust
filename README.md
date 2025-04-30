@@ -1,3 +1,7 @@
+## IMPORTANT Notice!!!
+
+> [!CAUTION]
+> This repository has many security vulnerabilities that's why i am archiving it. But you can still use it if you want according to the [license](./LICENSE)
 
 
 > **⚠️ Found a bug or issue?**  
