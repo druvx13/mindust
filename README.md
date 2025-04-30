@@ -14,7 +14,7 @@
 ![PHP](https://img.shields.io/badge/PHP-7.4+-blue.svg?style=flat&logo=php)  
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg?style=flat&logo=mysql)  
 ![License](https://img.shields.io/badge/License-GPL--3.0-green.svg?style=flat)  
-![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg?style=flat)  
+
 
 **Mindust** is a minimalist PHP + MySQL blogging system that delivers essential features without the complexity of major platforms. Ideal for personal blogs, writers, and developers who seek simplicity and control.  
 
