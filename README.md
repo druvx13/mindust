@@ -1,141 +1,192 @@
-## IMPORTANT Notice!!!
+# Mindust - A Minimalist PHP Blogging System
 
-> [!CAUTION]
-> This repository has many security vulnerabilities that's why i am archiving it. But you can still use it if you want according to the [license](./LICENSE)
+![PHP](https://img.shields.io/badge/PHP-7.4+-blue.svg?style=flat&logo=php)
+![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg?style=flat&logo=mysql)
+![License](https://img.shields.io/badge/License-GPL--3.0-green.svg?style=flat)
 
+**Mindust** is a lightweight, minimalist blogging system built with PHP and MySQL. It's designed for personal blogs, writers, and developers who appreciate simplicity, control, and a retro-modern aesthetic.
 
-> **⚠️ Found a bug or issue?**  
-> If you encounter or find any error, **do not hesitate to report it in the [Issues](../../issues) section**.  
-> This helps me identify and fix problems more effectively. Thank you!
+> **⚠️ Security Warning & Archived Status**
+>
+> This project is **archived** and **NOT recommended for production use without significant security hardening**. It contains known security vulnerabilities, including but not limited to:
+>
+> *   **Hardcoded Default Password**: The default password for post creation (`ChangeMeImmediately123!` in `create_post.php`) **MUST** be changed immediately after installation.
+> *   **Basic Input Sanitization**: While some `htmlspecialchars` is used, the project may still be vulnerable to XSS and other injection attacks.
+> *   **SQL Injection**: Review all database queries for potential SQL injection vulnerabilities if you intend to use or modify this code.
+> *   **No CSRF Protection**: Forms lack CSRF tokens, making them vulnerable to cross-site request forgery.
+>
+> If you choose to use or learn from this code, do so with caution and at your own risk. It is primarily intended as a learning example or a base for a heavily modified, secured version.
 
----
+## ✨ Features
 
-# **Mindust**  
-![PHP](https://img.shields.io/badge/PHP-7.4+-blue.svg?style=flat&logo=php)  
-![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg?style=flat&logo=mysql)  
-![License](https://img.shields.io/badge/License-GPL--3.0-green.svg?style=flat)  
+*   **Simple Post Management**: Create, view, and (implicitly) manage blog posts.
+*   **Password-Protected Post Creation**: Basic password protection for publishing new content.
+*   **Built-in Comment System**: Allows readers to engage with posts.
+*   **Thumbnail Support**: Each post can feature a main image.
+*   **Markdown Support**: Write posts using Markdown for easy formatting (rendered client-side).
+*   **Floating Music Player**: A non-intrusive music player for ambient background audio.
+*   **Archive Page**: Browse all posts chronologically.
+*   **Contact Page**: A simple contact form to receive messages.
+*   **Customizable Footer & Legal Page**: Easily modify copyright and legal information.
+*   **Responsive Design**: A clean, user-friendly layout that adapts to different screen sizes.
 
+## 🛠 Tech Stack
 
-**Mindust** is a minimalist PHP + MySQL blogging system that delivers essential features without the complexity of major platforms. Ideal for personal blogs, writers, and developers who seek simplicity and control.  
+*   **Backend**: PHP (7.4+)
+*   **Database**: MySQL (5.7+)
+*   **Frontend**: HTML5, Tailwind CSS (via CDN), Vanilla JavaScript, Font Awesome (via CDN), Marked.js (for Markdown rendering, via CDN)
 
----
+## 🚀 Installation
 
-## ✨ **Features**  
+Follow these steps to set up Mindust on your local server or web host that supports PHP and MySQL.
 
-✔ **Post Management** – Create, edit, and delete blog posts.  
-✔ **Password-Protected Post Creation** – A password is required to publish posts.  
-✔ **Built-in Comment System** – Enables user interactions through comments.  
-✔ **Thumbnail Support** – Each post supports a single image.  
-✔ **Floating Music Button** – Plays one audio file from `/music/`.  
-✔ **Archive Page** – View posts by date.  
-✔ **Contact Page** – Includes a simple contact form.  
-✔ **Customizable Footer** – Easily modify copyright information.  
-✔ **Mobile-Responsive** – Clean, user-friendly layout.  
+### 1. Prerequisites
 
----
+*   A web server (e.g., Apache, Nginx) with PHP 7.4 or higher.
+*   MySQL 5.7 or higher (or MariaDB equivalent).
+*   Access to a MySQL database management tool (e.g., phpMyAdmin, MySQL CLI).
+*   Git (optional, for cloning).
 
-## 🛠 **Tech Stack**  
+### 2. Clone the Repository
 
-![PHP](https://img.shields.io/badge/PHP-7.4+-blue.svg?style=flat&logo=php)  
-![MySQL](https://img.shields.io/badge/MySQL-5.7+-orange.svg?style=flat&logo=mysql)  
-![HTML](https://img.shields.io/badge/HTML5-FF5733.svg?style=flat&logo=html5)  
-![CSS](https://img.shields.io/badge/CSS3-2962FF.svg?style=flat&logo=css3)  
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=flat&logo=javascript)  
-
----
-
-## 🚀 **Installation**  
-
-### 1️⃣ Clone the repository  
+Clone this repository to your local machine or server:
 
 ```bash
 git clone https://github.com/druvx13/mindust.git
 cd mindust
 ```
+Alternatively, download the ZIP file and extract it.
 
-### 2️⃣ Set up the database  
+### 3. Database Setup
 
-- Create a MySQL database named **`mindust`**.  
-- Import the SQL file from the **`db/`** folder using phpMyAdmin or the MySQL CLI.  
+1.  **Create a Database**:
+    *   Using your MySQL management tool, create a new database. For example, `mindust_db`.
+    *   Ensure the database uses `utf8mb4` character set for full Unicode support.
+2.  **Import the SQL Schema**:
+    *   Import the `db/database.sql` file into your newly created database. This will create the necessary tables (`posts`, `comments`, `messages`).
 
-### 3️⃣ Configure the application  
+    Example using MySQL CLI:
+    ```bash
+    mysql -u your_username -p your_database_name < db/database.sql
+    ```
+    Replace `your_username` and `your_database_name` accordingly.
 
-Edit **`config.php`** with your database credentials:  
+### 4. Application Configuration
 
-```php
-$host = 'localhost';
-$dbname = 'mindust';
-$username = 'your_username';
-$password = 'your_password';
+1.  **Configure Database Connection**:
+    *   Rename or copy `config.php.example` to `config.php` (if `config.php` doesn't exist with placeholders).
+    *   Edit `config.php` and update the following database credentials:
+        ```php
+        $host = 'YOUR_DB_HOST';         // e.g., 'localhost'
+        $dbname = 'YOUR_DB_NAME';       // e.g., 'mindust_db'
+        $username = 'YOUR_DB_USERNAME'; // e.g., 'root' or your specific DB user
+        $password = 'YOUR_DB_PASSWORD'; // Your database password
+        ```
+
+2.  **‼️ Change Post Creation Password (CRITICAL SECURITY STEP)**:
+    *   Open `create_post.php`.
+    *   Locate the line: `if ($password !== 'ChangeMeImmediately123!') {`
+    *   **Change `'ChangeMeImmediately123!'` to a strong, unique password that you will remember.** This password is required to publish new posts.
+    *   **Failure to change this default password poses a significant security risk.**
+
+### 5. Directory Permissions (If Applicable)
+
+Ensure the `uploads/` directory is writable by your web server. This is where post thumbnails will be stored.
+```bash
+chmod -R 755 uploads/ # Or 775 depending on your server setup
+# You might also need to set ownership: chown -R www-data:www-data uploads/
 ```
 
-### 4️⃣ Set the post creation password  
+### 6. Run the Project
 
-Modify **`create_post.php`** to set a password for publishing posts:  
+*   Move the entire `mindust` project folder to your web server's document root (e.g., `htdocs/`, `www/`, `public_html/`).
+*   Open your web browser and navigate to the project's URL (e.g., `http://localhost/mindust/` or `http://yourdomain.com/mindust/`).
 
-```php
-if ($password !== 'your-password') {
-    $errors[] = 'Incorrect password.';
-}
+## ⚙️ Usage
+
+*   **Homepage (`index.php`)**: Displays the latest posts, a sidebar with author info and random quotes, and a "New Post" button.
+*   **Creating Posts**:
+    *   Click the "New Post" button on the homepage.
+    *   Fill in the title, category, content (Markdown is supported), and upload a thumbnail.
+    *   Enter the **post creation password** you set in `create_post.php`.
+    *   Click "Publish".
+*   **Viewing Posts (`post.php`)**: Click "Read More" on any post to view its full content and comments.
+*   **Commenting**: Visitors can add comments to posts.
+*   **Archive (`archive.php`)**: Lists all published posts.
+*   **Contact (`contact.php`)**: A form for visitors to send messages (stored in the `messages` table).
+*   **Legal (`copyright.php`)**: Displays copyright and terms of use information.
+
+## 📂 Project Structure
+
 ```
-
-> **Note:** This password must be entered when creating a post via the form in `index.php`.  
-
-### 5️⃣ Run the project locally  
-
-- Move the project to your local server directory (`htdocs` or `www`).  
-- Open `http://localhost/mindust/index.php` in your browser.  
-
----
-
-## 📂 **Project Structure**  
-
-```plaintext
 mindust/
-├── db/               # Database schema
-├── uploads/          # Post thumbnails
-├── music/            # Music files for floating player
-├── index.php         # Homepage + post creation form
-├── post.php          # Full post view
-├── create_post.php   # Admin post creation handler
-├── archive.php       # Archive page
-├── contact.php       # Contact form
-├── config.php        # Database configuration
-├── copyright.php     # Editable footer
-└── README.md         # Documentation
+├── assets/
+│   ├── css/
+│   │   └── style.css         # Main stylesheet
+│   └── js/
+│       └── main.js           # Main JavaScript file
+├── db/
+│   ├── database.sql          # MySQL database schema
+│   └── .gitkeep              # Ensures db directory is tracked by Git
+├── includes/
+│   ├── footer.php            # Site footer
+│   ├── head.php              # HTML head section (meta, CSS links)
+│   ├── header.php            # Site header and navigation
+│   ├── mobile_menu.php       # Mobile navigation menu
+│   ├── music_toggle.php      # Floating music player
+│   ├── post_modal.php        # Modal for creating new posts
+│   └── sidebar.php           # Sidebar content
+├── music/
+│   ├── Heavenly - Aakash Gandhi.mp3  # Default music file
+│   └── .gitkeep              # Ensures music directory is tracked
+├── uploads/                  # Directory for post thumbnails (must be writable)
+│   ├── default.jpg           # Default thumbnail if none uploaded
+│   └── .gitkeep              # Ensures uploads directory is tracked
+├── archive.php               # Displays all posts
+├── config.php                # Database and application configuration
+├── contact.php               # Contact form page
+├── copyright.php             # Legal/copyright information page
+├── create_post.php           # Handles new post creation (server-side)
+├── index.php                 # Homepage
+├── LICENSE                   # Project license (GPL-3.0)
+├── post.php                  # Displays a single post and comments
+└── README.md                 # This file
 ```
 
+## 🎨 Customization
+
+*   **Appearance**:
+    *   Modify CSS variables and styles in `assets/css/style.css`.
+    *   Tailwind CSS utility classes are used throughout the HTML; you can adjust these directly in the PHP files or includes.
+*   **Content**:
+    *   **Site Title/Logo**: Change in `includes/header.php` (the "Mind Dust" text).
+    *   **About the Writer/Social Links**: Edit `includes/sidebar.php`.
+    *   **Random Quotes**: Modify the `$quotes_array` in `index.php` (for initial server-side quote) and the `quotes` array in `assets/js/main.js` (for client-side updates).
+    *   **Footer Text**: Update `includes/footer.php`.
+    *   **Legal Information**: Edit `copyright.php`.
+*   **Music**:
+    *   To change the music track, replace `music/Heavenly - Aakash Gandhi.mp3` with your desired MP3 file.
+    *   Update the `<source src="...">` path in `includes/music_toggle.php` if you change the filename or location.
+*   **Post Categories**: Modify the `<option>` values in the select dropdown within `includes/post_modal.php`.
+
+## 🤝 Contributing
+
+While this project is archived, contributions for learning purposes or significant security improvements might be considered. If you wish to contribute:
+
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/YourImprovement`).
+3.  Make your changes.
+4.  Commit your changes (`git commit -m 'Add some YourImprovement'`).
+5.  Push to the branch (`git push origin feature/YourImprovement`).
+6.  Open a Pull Request.
+
+Please ensure any contributions address security concerns if applicable and maintain the minimalist philosophy of the project.
+
+## 📜 License
+
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+See the [LICENSE](./LICENSE) file for full details.
+
 ---
 
-## 🎵 **Media & Music Usage**  
-
-- **Thumbnails**:  
-  - Each post supports one image stored in `/uploads/`.  
-
-- **Floating Music Button**:  
-  - Plays an audio file from `/music/`.  
-  - To change the track, replace or rename the file and update references where needed.  
-
----
-
-## 🎨 **Customization**  
-
-- **Comments** – Already integrated, no plugin required.  
-- **Footer** – Modify `copyright.php`.  
-- **Post Creation Access** – Change the password in `create_post.php`.  
-
----
-
-## 📜 **License**  
-
-This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.  
-See the [LICENSE](./LICENSE) file for full details.  
-
----
-
-## 🤝 **Contributing**  
-
-[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg?style=flat)](https://github.com/druvx13/mindust/pulls)  
-Contributions are welcome! Fork the repo, make improvements, and submit a pull request.  
-
----
+*Originally created by druvx13. Maintained and refactored for clarity and structural improvements.*
