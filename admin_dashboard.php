@@ -29,37 +29,45 @@ include 'includes/admin_header_inc.php'; // This now includes head, body tag, an
     </div>
 
     <div class="mt-10 p-6 bg-slate-800/70 rounded-lg border border-slate-700">
-        <h3 class="text-xl font-semibold text-indigo-300 mb-3">Quick Stats (Placeholder)</h3>
+                <h3 class="text-xl font-semibold text-indigo-300 mb-3">Quick Stats</h3>
         <?php
-            // Placeholder for fetching actual stats. Requires config.php and PDO.
-            // For now, just static.
-            // include_once 'config.php'; // Make sure $pdo is available if we query DB
-            $postCount = "[N/A]";
-            $commentCount = "[N/A]";
-            $messageCount = "[N/A]";
+                // Fetching actual stats. $pdo is available from config.php, included by admin_header_inc.php
+                $postCount = "N/A";
+                $commentCount = "N/A";
+                $messageCount = "N/A";
+                $adminCount = "N/A";
 
-            /*
-            // Example of how to fetch counts if $pdo was available:
-            if (isset($pdo)) {
-                try {
-                    $stmt_posts = $pdo->query("SELECT COUNT(*) FROM posts");
-                    $postCount = $stmt_posts->fetchColumn();
-                    $stmt_comments = $pdo->query("SELECT COUNT(*) FROM comments");
-                    $commentCount = $stmt_comments->fetchColumn();
-                    $stmt_messages = $pdo->query("SELECT COUNT(*) FROM messages");
-                    $messageCount = $stmt_messages->fetchColumn();
-                } catch (PDOException $e) {
-                    error_log("Dashboard stat query error: " . $e->getMessage());
+                if (isset($pdo)) {
+                    try {
+                        $stmt_posts = $pdo->query("SELECT COUNT(*) FROM posts");
+                        $postCount = $stmt_posts->fetchColumn();
+
+                        $stmt_comments = $pdo->query("SELECT COUNT(*) FROM comments");
+                        $commentCount = $stmt_comments->fetchColumn();
+
+                        $stmt_messages = $pdo->query("SELECT COUNT(*) FROM messages");
+                        $messageCount = $stmt_messages->fetchColumn();
+
+                        $stmt_admins = $pdo->query("SELECT COUNT(*) FROM admins");
+                        $adminCount = $stmt_admins->fetchColumn();
+
+                    } catch (PDOException $e) {
+                        error_log("Admin Dashboard Quick Stats Error: " . $e->getMessage());
+                        // Variables will remain "N/A"
+                    }
+                } else {
+                     error_log("Admin Dashboard Quick Stats Error: PDO object not available.");
                 }
-            }
-            */
-        ?>
+                ?>
         <ul class="text-gray-400 space-y-2">
-            <li class="flex justify-between items-center"><span>Total Posts:</span> <span class="font-bold text-indigo-400 text-lg"><?= $postCount ?></span></li>
-            <li class="flex justify-between items-center"><span>Total Comments:</span> <span class="font-bold text-indigo-400 text-lg"><?= $commentCount ?></span></li>
-            <li class="flex justify-between items-center"><span>Total Messages (Contact Form):</span> <span class="font-bold text-indigo-400 text-lg"><?= $messageCount ?></span></li>
+                    <li class="flex justify-between items-center"><span>Total Posts:</span> <span class="font-bold text-indigo-400 text-lg"><?= htmlspecialchars($postCount) ?></span></li>
+                    <li class="flex justify-between items-center"><span>Total Comments:</span> <span class="font-bold text-indigo-400 text-lg"><?= htmlspecialchars($commentCount) ?></span></li>
+                    <li class="flex justify-between items-center"><span>Total Contact Messages:</span> <span class="font-bold text-indigo-400 text-lg"><?= htmlspecialchars($messageCount) ?></span></li>
+                    <li class="flex justify-between items-center"><span>Total Admin Users:</span> <span class="font-bold text-indigo-400 text-lg"><?= htmlspecialchars($adminCount) ?></span></li>
         </ul>
-        <p class="text-xs text-gray-500 mt-4">Note: Live stats require database connection and queries to be implemented.</p>
+                <?php if (!isset($pdo) || $postCount === "N/A"): ?>
+                <p class="text-xs text-yellow-500 mt-4">Note: Stats could not be loaded. Check database connection or server logs.</p>
+                <?php endif; ?>
     </div>
 </div>
 
