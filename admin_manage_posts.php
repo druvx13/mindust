@@ -119,12 +119,24 @@ if (isset($_SESSION['admin_message'])) {
                 <div>
                     <label for="postCategory" class="block text-sm font-medium text-gray-300 mb-1">Category</label>
                     <select id="postCategory" name="postCategory" required class="admin-form-input">
-                        <?php $categories = ['Psychology', 'Philosophy', 'Rebellion', 'Existential', 'Spiritual', 'Technology', 'Personal']; ?>
-                        <?php foreach ($categories as $cat): ?>
-                        <option value="<?= strtolower($cat) ?>" <?= (isset($form_data['postCategory']) && $form_data['postCategory'] == strtolower($cat)) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($cat) ?>
-                        </option>
-                        <?php endforeach; ?>
+                        <?php
+                        try {
+                            $stmt_cat = $pdo->query("SELECT slug, name FROM categories ORDER BY name ASC");
+                            $available_categories = $stmt_cat->fetchAll(PDO::FETCH_ASSOC);
+                            if (empty($available_categories)) {
+                                echo '<option value="" disabled selected>No categories available. Please create one first.</option>';
+                            } else {
+                                echo '<option value="" disabled ' . (!isset($form_data['postCategory']) || empty($form_data['postCategory']) ? 'selected' : '') . '>Select a category...</option>';
+                                foreach ($available_categories as $cat_db) {
+                                    $selected = (isset($form_data['postCategory']) && $form_data['postCategory'] == $cat_db['slug']) ? 'selected' : '';
+                                    echo '<option value="' . htmlspecialchars($cat_db['slug']) . '" ' . $selected . '>' . htmlspecialchars($cat_db['name']) . '</option>';
+                                }
+                            }
+                        } catch (PDOException $e) {
+                            error_log("Error fetching categories for post form: " . $e->getMessage());
+                            echo '<option value="" disabled selected>Error loading categories.</option>';
+                        }
+                        ?>
                     </select>
                 </div>
                 <div>
@@ -231,12 +243,26 @@ if (isset($_SESSION['admin_message'])) {
                 <div>
                     <label for="postCategory" class="block text-sm font-medium text-gray-300 mb-1">Category</label>
                     <select id="postCategory" name="postCategory" required class="admin-form-input">
-                        <?php $categories = ['Psychology', 'Philosophy', 'Rebellion', 'Existential', 'Spiritual', 'Technology', 'Personal']; ?>
-                        <?php foreach ($categories as $cat): ?>
-                        <option value="<?= strtolower($cat) ?>" <?= (isset($post_data_for_form['category']) && $post_data_for_form['category'] == strtolower($cat)) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($cat) ?>
-                        </option>
-                        <?php endforeach; ?>
+                        <?php
+                        try {
+                            // $available_categories should already be fetched if create form was just used, but good to re-fetch or ensure it's in scope
+                            // For edit form, it's safer to re-fetch to ensure fresh data.
+                            $stmt_cat_edit = $pdo->query("SELECT slug, name FROM categories ORDER BY name ASC");
+                            $available_categories_edit = $stmt_cat_edit->fetchAll(PDO::FETCH_ASSOC);
+                            if (empty($available_categories_edit)) {
+                                echo '<option value="" disabled selected>No categories defined. Create one first.</option>';
+                            } else {
+                                 echo '<option value="" disabled ' . (!isset($post_data_for_form['category']) || empty($post_data_for_form['category']) ? 'selected' : '') . '>Select a category...</option>';
+                                foreach ($available_categories_edit as $cat_db_edit) {
+                                    $selected_edit = (isset($post_data_for_form['category']) && $post_data_for_form['category'] == $cat_db_edit['slug']) ? 'selected' : '';
+                                    echo '<option value="' . htmlspecialchars($cat_db_edit['slug']) . '" ' . $selected_edit . '>' . htmlspecialchars($cat_db_edit['name']) . '</option>';
+                                }
+                            }
+                        } catch (PDOException $e) {
+                            error_log("Error fetching categories for post edit form: " . $e->getMessage());
+                            echo '<option value="" disabled selected>Error loading categories.</option>';
+                        }
+                        ?>
                     </select>
                 </div>
                 <div>
@@ -307,6 +333,13 @@ if (isset($_SESSION['admin_message'])) {
 
             $currentThumbnail = null;
             $targetDir = "uploads/";
+
+            if (!is_dir($targetDir) || !is_writable($targetDir)) {
+                $errors[] = "Uploads directory does not exist or is not writable. Please check server configuration.";
+            }
+            // Only proceed with DB call if uploads dir is fine, or make this check later before move_uploaded_file
+            // For now, let's keep DB call and add check before file operations.
+
             try {
                 $stmt_curr = $pdo->prepare("SELECT thumbnail FROM posts WHERE id = ?");
                 $stmt_curr->execute([$post_id]);

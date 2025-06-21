@@ -35,8 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($content)) $errors[] = 'Post content is required.';
 
     // Handle thumbnail upload
-    if (isset($_FILES['postThumbnail']) && $_FILES['postThumbnail']['error'] === UPLOAD_ERR_OK) {
-        $targetDir = "uploads/";
+    $targetDir = "uploads/";
+    if (!is_dir($targetDir) || !is_writable($targetDir)) {
+        $errors[] = "Uploads directory does not exist or is not writable. Please check server configuration.";
+    } elseif (isset($_FILES['postThumbnail']) && $_FILES['postThumbnail']['error'] === UPLOAD_ERR_OK) {
         $fileName = preg_replace("/[^a-zA-Z0-9._-]+/", "", basename($_FILES['postThumbnail']['name']));
         // Ensure filename is not empty after sanitization
         if (empty($fileName)) {

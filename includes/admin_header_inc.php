@@ -45,7 +45,9 @@ $page_title_for_head = $page_title_for_head ?? "Admin Area | Mindust CMS";
             <?php if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true): ?>
                 <a href="admin_dashboard.php" class="hover:text-indigo-300 mr-3 transition-colors">Dashboard</a>
                 <a href="admin_manage_posts.php" class="hover:text-indigo-300 mr-3 transition-colors">Manage Posts</a>
-                <!-- Add more admin links here -->
+                <a href="admin_manage_categories.php" class="hover:text-indigo-300 mr-3 transition-colors">Manage Categories</a>
+                <a href="admin_manage_users.php" class="hover:text-indigo-300 mr-3 transition-colors">Manage Users</a>
+                <!-- Add more admin links here: e.g., Settings -->
                 <a href="admin_logout.php" class="text-indigo-400 hover:text-indigo-300 transition-colors">Logout <i class="fas fa-sign-out-alt ml-1"></i></a>
             <?php else: ?>
                 <a href="admin_login.php" class="text-indigo-400 hover:text-indigo-300 transition-colors">Login</a>
