@@ -1,0 +1,93 @@
+/* Admin-specific styles */
+body.admin-area {
+    background-color: #1e293b; /* var(--secondary) equivalent, slate-800 */
+    color: #e2e8f0; /* var(--text) equivalent, slate-200 */
+}
+
+.admin-header {
+    background-color: #0f172a; /* var(--primary) equivalent, slate-900 */
+    color: white;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.admin-container {
+    margin: 1rem auto;
+    padding: 1rem;
+    max-width: 1200px; /* Or your preferred max width */
+}
+
+.admin-card {
+    background-color: #0f172a; /* var(--primary) */
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border: 1px solid #334155; /* slate-700 */
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.admin-table th, .admin-table td {
+    border: 1px solid #334155; /* slate-700 */
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.admin-table th {
+    background-color: #1e293b; /* slate-800 */
+    color: #94a3b8; /* slate-400 */
+    font-weight: 600;
+}
+
+.admin-table tr:nth-child(even) {
+    background-color: #162033; /* Slightly different for zebra striping */
+}
+
+.admin-table a {
+    color: #6366f1; /* var(--accent) */
+    text-decoration: none;
+}
+.admin-table a:hover {
+    text-decoration: underline;
+}
+
+.admin-button {
+    background-color: #6366f1; /* var(--accent) */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease-in-out;
+}
+.admin-button:hover {
+    background-color: #4f46e5; /* Darker accent */
+}
+.admin-button.danger {
+    background-color: #dc2626; /* red-600 */
+}
+.admin-button.danger:hover {
+    background-color: #b91c1c; /* red-700 */
+}
+
+.admin-form-input {
+    background-color: #334155; /* slate-700 */
+    border: 1px solid #475569; /* slate-600 */
+    color: #e2e8f0; /* slate-200 */
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    width: 100%;
+}
+.admin-form-input:focus {
+    outline: none;
+    border-color: #6366f1; /* var(--accent) */
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
+
+.admin-form-textarea {
+    min-height: 150px;
+}

@@ -44,9 +44,9 @@ $page_title = 'Mind Dust | Late-Night Thoughts for Wanderers';
             </div>
             <!-- Create New Post Button -->
             <div class="flex justify-end mb-6">
-                <button id="newPostButton" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center transition">
-                    <i class="fas fa-plus mr-2"></i> New Post
-                </button>
+                <a href="admin_manage_posts.php?action=create" id="adminNewPostLink" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center transition">
+                    <i class="fas fa-plus mr-2"></i> New Post (Admin)
+                </a>
             </div>
             <!-- Blog Posts Grid -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -95,7 +95,6 @@ $page_title = 'Mind Dust | Late-Night Thoughts for Wanderers';
         </main>
     </div>
     
-    <?php include 'includes/post_modal.php'; ?>
     <?php include 'includes/footer.php'; ?>
     
     <script src="assets/js/main.js"></script>

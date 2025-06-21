@@ -1,5 +1,6 @@
 <?php
 include 'config.php';
+require_once 'includes/csrf_helper.php'; // Include CSRF helper
 
 // Fetch post data
 $post_id = $_GET['id'] ?? null;
@@ -23,8 +24,11 @@ $error = null; // Initialize error variable
 
 // Handle comment submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
-    $author = trim($_POST['author'] ?? '');
-    $email = trim($_POST['email'] ?? ''); // Email is collected but not displayed by default, consider privacy.
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $error = "Invalid CSRF token. Please try again.";
+    } else {
+        $author = trim($_POST['author'] ?? '');
+        $email = trim($_POST['email'] ?? ''); // Email is collected but not displayed by default, consider privacy.
     $content = trim($_POST['content'] ?? '');
     
     if (empty($author) || empty($content)) {
@@ -42,7 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_comment'])) {
             $error = "Could not submit comment. Please try again later.";
         }
     }
-}
+} // This closes the main if POST && isset submit_comment
+} // This closes the else for CSRF token verification
 
 // Fetch comments for the current post
 $stmt_comments = $pdo->prepare("SELECT * FROM comments WHERE post_id = ? ORDER BY created_at DESC");
@@ -50,6 +55,7 @@ $stmt_comments->execute([$post_id]);
 $comments = $stmt_comments->fetchAll(PDO::FETCH_ASSOC);
 
 $page_title = htmlspecialchars($post['title']) . ' | Mind Dust';
+$csrf_token = generate_csrf_token(); // Generate CSRF token for the comment form
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,6 +94,7 @@ $page_title = htmlspecialchars($post['title']) . ' | Mind Dust';
 
                 <!-- Comment Form -->
                 <form method="POST" action="post.php?id=<?=$post_id?>#comments-section" class="mb-8 space-y-4">
+                    <?php csrf_input_field(); ?>
                     <?php if ($error): ?>
                         <div class="bg-red-700/50 border border-red-900/70 text-red-300 p-3 rounded-lg mb-4 text-sm">
                             <i class="fas fa-exclamation-circle mr-2"></i><?=htmlspecialchars($error)?>

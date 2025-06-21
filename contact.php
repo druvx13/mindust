@@ -1,5 +1,6 @@
 <?php
 include 'config.php';
+require_once 'includes/csrf_helper.php'; // Include CSRF helper
 
 $message_sent = false;
 $error_message = '';
@@ -9,7 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $message_content = trim($_POST['message'] ?? ''); // Renamed to avoid conflict
 
-    if (empty($name) || empty($email) || empty($message_content)) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $error_message = "Invalid CSRF token. Please try again.";
+    } elseif (empty($name) || empty($email) || empty($message_content)) {
         $error_message = "All fields are required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error_message = "Invalid email format.";
@@ -32,6 +35,7 @@ if (isset($_GET['success']) && $_GET['success'] == '1') {
 }
 
 $page_title = 'Contact Us | Mind Dust';
+$csrf_token = generate_csrf_token(); // Generate CSRF token for the contact form
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,6 +66,7 @@ $page_title = 'Contact Us | Mind Dust';
                 <?php endif; ?>
 
                 <form method="POST" action="contact.php" class="space-y-6">
+                    <?php csrf_input_field(); ?>
                     <div>
                         <label for="name" class="block text-sm font-medium mb-1 text-gray-300">Full Name</label>
                         <input type="text" id="name" name="name" placeholder="Your Name" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>">
