@@ -24,25 +24,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             try {
                 $stmt = $pdo->prepare("SELECT id, username, password_hash FROM admins WHERE username = ?");
-            $stmt->execute([$username]);
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+                $stmt->execute([$username]);
+                $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($admin && password_verify($password, $admin['password_hash'])) {
-                $_SESSION['admin_logged_in'] = true;
-                $_SESSION['admin_id'] = $admin['id'];
-                $_SESSION['admin_username'] = $admin['username'];
-                session_regenerate_id(true);
-                header("Location: admin_dashboard.php");
-                exit;
-            } else {
-                $error_message = "Invalid username or password.";
+                if ($admin && password_verify($password, $admin['password_hash'])) {
+                    $_SESSION['admin_logged_in'] = true;
+                    $_SESSION['admin_id']       = $admin['id'];
+                    $_SESSION['admin_username'] = $admin['username'];
+                    session_regenerate_id(true);
+                    header("Location: admin_dashboard.php");
+                    exit;
+                } else {
+                    $error_message = "Invalid username or password.";
+                }
+            } catch (PDOException $e) {
+                error_log("Admin Login Error: " . $e->getMessage());
+                $error_message = "An error occurred. Please try again later.";
             }
-        } catch (PDOException $e) {
-            error_log("Admin Login Error: " . $e->getMessage());
-            $error_message = "An error occurred. Please try again later.";
         }
     }
-}
+}  // ← Added this closing brace to match the POST handler
 
 $page_title_for_head = "Admin Login | Mind Dust";
 $csrf_token = generate_csrf_token(); // Generate CSRF token for the form
@@ -80,9 +81,15 @@ $csrf_token = generate_csrf_token(); // Generate CSRF token for the form
                 <label for="password" class="block text-sm font-medium mb-1 text-gray-300">Password</label>
                 <input type="password" id="password" name="password" required class="w-full form-input rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500" placeholder="Enter your password">
             </div>
-            <div><button type="submit" class="w-full submit-btn text-white px-6 py-3 rounded-lg transition-opacity duration-200 font-semibold">Login</button></div>
+            <div>
+                <button type="submit" class="w-full submit-btn text-white px-6 py-3 rounded-lg transition-opacity duration-200 font-semibold">Login</button>
+            </div>
         </form>
-        <p class="text-center mt-6 text-sm"><a href="index.php" class="text-indigo-400 hover:text-indigo-300 transition">&larr; Back to site</a></p>
+        <p class="text-center mt-6 text-sm">
+            <a href="index.php" class="text-indigo-400 hover:text-indigo-300 transition">
+                &larr; Back to site
+            </a>
+        </p>
     </div>
     <script src="assets/js/main.js"></script>
 </body>
