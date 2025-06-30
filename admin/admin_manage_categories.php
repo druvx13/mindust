@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config.php';
-require_once 'includes/csrf_helper.php';
+require_once '../config.php';
+require_once '../includes/csrf_helper.php';
 
 // Admin authentication check
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -13,7 +13,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 $action = $_GET['action'] ?? 'list'; // Default action
 $page_title_for_head = "Manage Categories | Mindust CMS";
 
-include 'includes/admin_header_inc.php';
+include '../includes/admin_header_inc.php';
 
 // Display session messages
 if (isset($_SESSION['admin_message'])) {
@@ -380,5 +380,5 @@ function generate_slug(string $name): string {
 </div>
 
 <?php
-include 'includes/admin_footer_inc.php';
+include '../includes/admin_footer_inc.php';
 ?>

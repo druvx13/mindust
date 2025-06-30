@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config.php'; // For $pdo
-require_once 'includes/csrf_helper.php'; // Include CSRF helper
+require_once '../config.php'; // For $pdo
+require_once '../includes/csrf_helper.php'; // Include CSRF helper
 
 // Admin authentication check
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
@@ -13,7 +13,7 @@ $action = $_GET['action'] ?? 'list'; // Default action is 'list'
 $page_title_for_head = "Manage Posts | Mindust CMS";
 
 // Include admin header
-include 'includes/admin_header_inc.php';
+include '../includes/admin_header_inc.php';
 
 // Display session messages (success/error)
 if (isset($_SESSION['admin_message'])) {
@@ -67,12 +67,12 @@ if (isset($_SESSION['admin_message'])) {
                     echo '<tbody>';
                     foreach ($posts as $post) {
                         echo '<tr>';
-                        echo '<td><img src="uploads/' . htmlspecialchars($post['thumbnail'] ?: 'default.jpg') . '" alt="' . htmlspecialchars($post['title']) . '" class="w-16 h-10 object-cover rounded"></td>';
+                        echo '<td><img src="../uploads/' . htmlspecialchars($post['thumbnail'] ?: 'default.jpg') . '" alt="' . htmlspecialchars($post['title']) . '" class="w-16 h-10 object-cover rounded"></td>';
                         echo '<td>' . htmlspecialchars($post['title']) . '</td>';
                         echo '<td>' . htmlspecialchars($post['category']) . '</td>';
                         echo '<td>' . date("M d, Y H:i", strtotime($post['created_at'])) . '</td>';
                         echo '<td class="p-3 whitespace-nowrap text-sm font-medium space-x-2 flex items-center">'; // Added flex for button alignment
-                        echo '<a href="post.php?id=' . $post['id'] . '" target="_blank" class="admin-button text-xs bg-green-600 hover:bg-green-700"><i class="fas fa-eye"></i> View</a>';
+                        echo '<a href="../post.php?id=' . $post['id'] . '" target="_blank" class="admin-button text-xs bg-green-600 hover:bg-green-700"><i class="fas fa-eye"></i> View</a>';
                         echo '<a href="admin_manage_posts.php?action=edit&id=' . $post['id'] . '" class="admin-button text-xs bg-blue-600 hover:bg-blue-700"><i class="fas fa-edit"></i> Edit</a>';
                         // Delete form
                         echo '<form method="POST" action="admin_manage_posts.php?action=delete" class="inline-block m-0 p-0" onsubmit="return confirm(\'Are you sure you want to delete this post: ' . htmlspecialchars(addslashes($post['title'])) . '?\');">';
@@ -111,7 +111,7 @@ if (isset($_SESSION['admin_message'])) {
                 echo '</div>';
             }
             ?>
-            <form action="create_post.php" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="admin_manage_posts.php?action=store_new_post" method="POST" enctype="multipart/form-data" class="space-y-6">
                 <div>
                     <label for="postTitle" class="block text-sm font-medium text-gray-300 mb-1">Title</label>
                     <input type="text" id="postTitle" name="postTitle" required class="admin-form-input" value="<?= htmlspecialchars($form_data['postTitle'] ?? '') ?>">
@@ -180,6 +180,105 @@ if (isset($_SESSION['admin_message'])) {
                 }
             </script>
             <?php
+            break;
+
+        case 'store_new_post':
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                header("Location: admin_manage_posts.php?action=create"); // Redirect to form if not POST
+                exit;
+            }
+            if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+                $errors[] = 'Invalid or missing CSRF token. Action blocked.';
+                $_SESSION['admin_message'] = 'CSRF token validation failed. Please try submitting the form again.';
+                $_SESSION['admin_message_type'] = 'error';
+                $_SESSION['form_errors'] = $errors;
+                $_SESSION['form_data'] = $_POST;
+                header("Location: admin_manage_posts.php?action=create");
+                exit;
+            }
+
+            $thumbnail = 'default.jpg'; // Default thumbnail
+            $errors = [];
+
+            $title = trim($_POST['postTitle'] ?? '');
+            $category = trim($_POST['postCategory'] ?? '');
+            $content = trim($_POST['postContent'] ?? '');
+
+            if (empty($title)) $errors[] = 'Post title is required.';
+            if (empty($category)) $errors[] = 'Post category is required.';
+            if (empty($content)) $errors[] = 'Post content is required.';
+
+            // Handle thumbnail upload
+            $targetDir = "../uploads/"; // Adjusted path for admin directory
+            if (!is_dir($targetDir) || !is_writable($targetDir)) {
+                // Attempt to create the directory if it doesn't exist
+                if (!is_dir($targetDir)) {
+                    if (!mkdir($targetDir, 0755, true)) {
+                         $errors[] = "Uploads directory does not exist and could not be created. Please check server permissions.";
+                    } elseif (!is_writable($targetDir)) {
+                        $errors[] = "Uploads directory was created but is not writable. Please check server permissions.";
+                    }
+                } else {
+                     $errors[] = "Uploads directory (" . realpath($targetDir) . ") is not writable. Please check server permissions.";
+                }
+            }
+
+            if (empty($errors) && isset($_FILES['postThumbnail']) && $_FILES['postThumbnail']['error'] === UPLOAD_ERR_OK) {
+                $fileName = preg_replace("/[^a-zA-Z0-9._-]+/", "", basename($_FILES['postThumbnail']['name']));
+                if (empty($fileName)) {
+                    $fileName = bin2hex(random_bytes(8)) . ".jpg";
+                }
+                $targetPath = $targetDir . $fileName;
+
+                $imageFileType = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+                if (!in_array($imageFileType, $allowedExtensions)) {
+                    $errors[] = 'Invalid thumbnail file type. Only JPG, JPEG, PNG, GIF allowed.';
+                } elseif ($_FILES['postThumbnail']['size'] > 2 * 1024 * 1024) { // Max 2MB
+                    $errors[] = 'Thumbnail file size exceeds 2MB limit.';
+                } else {
+                    if (strpos($fileName, '/') !== false || strpos($fileName, '\\') !== false || $fileName === '.' || $fileName === '..') {
+                        $errors[] = 'Invalid thumbnail filename.';
+                    } else {
+                         if (move_uploaded_file($_FILES['postThumbnail']['tmp_name'], $targetPath)) {
+                            $thumbnail = $fileName;
+                        } else {
+                            $errors[] = 'Failed to upload thumbnail. Check permissions on uploads/ directory. Target: ' . $targetPath;
+                        }
+                    }
+                }
+            } elseif (isset($_FILES['postThumbnail']) && $_FILES['postThumbnail']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $errors[] = 'Error uploading thumbnail. Code: ' . $_FILES['postThumbnail']['error'];
+            }
+
+            if (empty($errors)) {
+                try {
+                    $stmt = $pdo->prepare("INSERT INTO posts (title, content, category, thumbnail) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([$title, $content, $category, $thumbnail]);
+
+                    $_SESSION['admin_message'] = "Post '" . htmlspecialchars($title) . "' created successfully!";
+                    $_SESSION['admin_message_type'] = "success";
+                    header("Location: admin_manage_posts.php"); // Redirect to list view
+                    exit();
+                } catch (PDOException $e) {
+                    error_log("Error creating post: " . $e->getMessage());
+                    $errors[] = 'A database error occurred while creating the post. Please try again later.';
+                    $_SESSION['admin_message'] = 'A database error occurred. Post not created.';
+                    $_SESSION['admin_message_type'] = "error";
+                }
+            }
+
+            if (!empty($errors)) {
+                $_SESSION['form_errors'] = $errors;
+                $_SESSION['form_data'] = [
+                    'postTitle' => htmlspecialchars($title),
+                    'postCategory' => htmlspecialchars($category),
+                    'postContent' => htmlspecialchars($content)
+                ];
+                header("Location: admin_manage_posts.php?action=create"); // Redirect back to create form
+                exit();
+            }
             break;
 
         case 'edit':
@@ -268,14 +367,14 @@ if (isset($_SESSION['admin_message'])) {
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">Current Thumbnail</label>
                     <?php if (!empty($post_data_for_form['thumbnail']) && $post_data_for_form['thumbnail'] !== 'default.jpg'): ?>
-                        <img src="uploads/<?= htmlspecialchars($post_data_for_form['thumbnail']) ?>" alt="Current Thumbnail" class="mb-2 w-40 h-auto rounded-md border border-slate-600 object-cover">
+                        <img src="../uploads/<?= htmlspecialchars($post_data_for_form['thumbnail']) ?>" alt="Current Thumbnail" class="mb-2 w-40 h-auto rounded-md border border-slate-600 object-cover">
                         <p class="text-xs text-gray-400 mb-1">Filename: <?= htmlspecialchars($post_data_for_form['thumbnail']) ?></p>
                         <label class="inline-flex items-center text-xs text-gray-400 cursor-pointer">
                             <input type="checkbox" name="removeThumbnail" value="1" class="form-checkbox h-4 w-4 text-indigo-600 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500 mr-1">
                             Remove current thumbnail
                         </label>
                     <?php elseif(!empty($post_data_for_form['thumbnail'])): ?>
-                         <img src="uploads/<?= htmlspecialchars($post_data_for_form['thumbnail']) ?>" alt="Default Thumbnail" class="mb-2 w-40 h-auto rounded-md border border-slate-600 object-cover">
+                         <img src="../uploads/<?= htmlspecialchars($post_data_for_form['thumbnail']) ?>" alt="Default Thumbnail" class="mb-2 w-40 h-auto rounded-md border border-slate-600 object-cover">
                          <p class="text-xs text-gray-400 mb-1">Current: default.jpg</p>
                     <?php else: ?>
                         <p class="text-xs text-gray-400 mb-1">No thumbnail set (will use default.jpg).</p>
@@ -332,12 +431,21 @@ if (isset($_SESSION['admin_message'])) {
             if (empty($content)) $errors[] = 'Post content is required.';
 
             $currentThumbnail = null;
-            $targetDir = "uploads/";
+            $targetDir = "../uploads/"; // Adjusted path
 
             if (!is_dir($targetDir) || !is_writable($targetDir)) {
-                $errors[] = "Uploads directory does not exist or is not writable. Please check server configuration.";
+                 // Attempt to create the directory if it doesn't exist
+                if (!is_dir($targetDir)) {
+                    if (!mkdir($targetDir, 0755, true)) {
+                         $errors[] = "Uploads directory does not exist and could not be created. Please check server permissions.";
+                    } elseif (!is_writable($targetDir)) {
+                        $errors[] = "Uploads directory was created but is not writable. Please check server permissions.";
+                    }
+                } else {
+                     $errors[] = "Uploads directory (" . realpath($targetDir) . ") is not writable. Please check server permissions.";
+                }
             }
-            // Only proceed with DB call if uploads dir is fine, or make this check later before move_uploaded_file
+            // Only proceed with DB call if uploads dir is fine (or was created), or make this check later before move_uploaded_file
             // For now, let's keep DB call and add check before file operations.
 
             try {
@@ -451,7 +559,7 @@ if (isset($_SESSION['admin_message'])) {
                 if ($stmt->rowCount() > 0) {
                     // If post deleted successfully, try to delete its thumbnail
                     if ($thumbnail_to_delete && $thumbnail_to_delete !== 'default.jpg') {
-                        $thumbnail_path = "uploads/" . $thumbnail_to_delete;
+                        $thumbnail_path = "../uploads/" . $thumbnail_to_delete; // Adjusted path
                         if (file_exists($thumbnail_path)) {
                             @unlink($thumbnail_path); // Suppress error if unlink fails, but ideally log it
                         }
@@ -482,5 +590,5 @@ if (isset($_SESSION['admin_message'])) {
 
 <?php
 // Include admin footer
-include 'includes/admin_footer_inc.php';
+include '../includes/admin_footer_inc.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'config.php';
-require_once 'includes/csrf_helper.php'; // Include CSRF helper
+require_once '../config.php';
+require_once '../includes/csrf_helper.php'; // Include CSRF helper
 
 // If already logged in, redirect to admin dashboard
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
@@ -51,7 +51,7 @@ $csrf_token = generate_csrf_token(); // Generate CSRF token for the form
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php include 'includes/head.php'; ?>
+    <?php include '../includes/head.php'; ?>
     <style>
         body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--primary); }
         .login-container { background-color: var(--secondary); padding: 2rem; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 100%; max-width: 400px; }
@@ -86,11 +86,11 @@ $csrf_token = generate_csrf_token(); // Generate CSRF token for the form
             </div>
         </form>
         <p class="text-center mt-6 text-sm">
-            <a href="index.php" class="text-indigo-400 hover:text-indigo-300 transition">
+            <a href="../index.php" class="text-indigo-400 hover:text-indigo-300 transition">
                 &larr; Back to site
             </a>
         </p>
     </div>
-    <script src="assets/js/main.js"></script>
+    <script src="../assets/js/main.js"></script>
 </body>
 </html>

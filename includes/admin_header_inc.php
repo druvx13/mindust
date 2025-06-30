@@ -28,7 +28,7 @@ $page_title_for_head = $page_title_for_head ?? "Admin Area | Mindust CMS";
     // $page_title_for_head is used by includes/head.php
     include_once __DIR__ . '/head.php';
     ?>
-    <link rel="stylesheet" href="<?= (strpos($_SERVER['PHP_SELF'], 'admin_') === false ? '../' : '') . 'assets/css/admin_style.css'; ?>">
+    <link rel="stylesheet" href="../assets/css/admin_style.css">
     <style>
         /* Additional critical admin-specific styles can go here if needed before admin_style.css loads */
         /* Or if admin_style.css fails to load, provides some fallback */

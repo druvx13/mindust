@@ -44,7 +44,7 @@ $page_title = 'Mind Dust | Late-Night Thoughts for Wanderers';
             </div>
             <!-- Create New Post Button -->
             <div class="flex justify-end mb-6">
-                <a href="admin_manage_posts.php?action=create" id="adminNewPostLink" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center transition">
+                <a href="admin/admin_manage_posts.php?action=create" id="adminNewPostLink" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center transition">
                     <i class="fas fa-plus mr-2"></i> New Post (Admin)
                 </a>
             </div>

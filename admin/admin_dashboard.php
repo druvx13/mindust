@@ -9,7 +9,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 }
 
 $page_title_for_head = "Admin Dashboard | Mindust CMS";
-include 'includes/admin_header_inc.php'; // This now includes head, body tag, and admin header/nav
+include '../includes/admin_header_inc.php'; // This now includes head, body tag, and admin header/nav
 ?>
 
 <div class="admin-card">
@@ -72,5 +72,5 @@ include 'includes/admin_header_inc.php'; // This now includes head, body tag, an
 </div>
 
 <?php
-include 'includes/admin_footer_inc.php'; // This now includes closing main, footer, scripts, and closing body/html tags
+include '../includes/admin_footer_inc.php'; // This now includes closing main, footer, scripts, and closing body/html tags
 ?>
