@@ -9,6 +9,7 @@
             <a href="archive.php" class="text-gray-400 hover:text-white transition">Archive</a>
             <a href="copyright.php" class="text-gray-400 hover:text-white transition">Legal</a>
             <a href="contact.php" class="text-gray-400 hover:text-white transition">Contact</a>
+            <a href="admin/index.php" class="text-gray-400 hover:text-white transition">Admin</a>
         </nav>
         <button id="mobileMenuButton" class="md:hidden text-gray-400 hover:text-white">
             <i class="fas fa-bars text-2xl"></i>
